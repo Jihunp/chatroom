@@ -17,6 +17,7 @@ export default class extends Controller {
   disconnect() {
     this.channel.unsubscribe()
   }
+
   send() {
     // this.chatboxTarget.innerHTML += `<div>${this.inputTarget.value}</div>`
     // this.inputTarget.value = ""
@@ -27,8 +28,6 @@ export default class extends Controller {
     console.log("Connected to Chatroom")
   }
   _received(data) {
-    console.log('Received Data')
-    console.log(data)
     this.chatboxTarget.innerHTML += `<div>${data.message}</div>`
   }
   _disconnected() {
