@@ -1,14 +1,37 @@
 import { Controller } from "@hotwired/stimulus"
+import consumer from "channels/consumer"
 
 export default class extends Controller {
   static targets = ["input", "chatbox"]
 
   connect() {
-    console.log("connected let's kick some ass")
+    this.channel = consumer.subscriptions.create(
+      { channel: "ChatroomChannel" }, {
+        connected: this._connected.bind(this),
+        received: this._received.bind(this),
+        disconnected: this._disconnected.bind(this)
+      }
+    )
   }
 
+  disconnect() {
+    this.channel.unsubscribe()
+  }
   send() {
-    this.chatboxTarget.innerHTML += `<div>${this.inputTarget.value}</div>`
-    this.inputTarget.value
+    // this.chatboxTarget.innerHTML += `<div>${this.inputTarget.value}</div>`
+    // this.inputTarget.value = ""
+    this.channel.send({ message: this.inputTarget.value })
+  }
+
+  _connected() {
+    console.log("Connected to Chatroom")
+  }
+  _received(data) {
+    console.log('Received Data')
+    console.log(data)
+    this.chatboxTarget.innerHTML += `<div>${data.message}</div>`
+  }
+  _disconnected() {
+    console.log('Disconnected from Chatrom')
   }
 }
